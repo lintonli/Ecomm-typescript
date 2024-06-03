@@ -31,17 +31,17 @@
       </header>
       <div class="form" id="formprod">
           <label for="Name">Product Name</label>
-          <input type="text" name="productname" id="productname" />
+          <input type="text" name="productname" id="productname"  required/>
           <label for="image-url">Image</label>
-          <input type="text" name="productimage" id="productimage" />
+          <input type="text" name="productimage" id="productimage" required />
           <label for="description">Description</label>
-          <input type="text" name="productdescription" id ="productdescription"/>
+          <input type="text" name="productdescription" id ="productdescription" required/>
           <label for="Price">Price</label>
-          <input type="number" name="productprice" id="productprice" />
+          <input type="number" name="productprice" id="productprice" required/>
           <label for="Quantity">Quantity</label>
-          <input type="number" name="productquantity" id="productquantity" />
-
-          <button  type="submit" class="button" id="btn">Add Product</button>
+          <input type="number" name="productquantity" id="productquantity" required/>
+          <div id="form-errors"></div>
+          <button type="submit"   class="button" >Add Product</button>
         </div>
       </div>
       <div class="productContent" id="content"></div>

@@ -1,25 +1,55 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = require("./user");
+const userURL = "http://localhost:3000/users";
 class RegisterUser {
     constructor(users) {
         this.users = users;
     }
+    fetchUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield fetch(userURL);
+            let data = yield response.json();
+            this.users = data;
+        });
+    }
     addUser(username, email, password) {
-        if (this.users.find((user) => user.email === email ||
-            user.password === password ||
-            user.username === username)) {
-            console.log("user already exist");
-            return false;
-        }
-        const newUser = { username, email, password };
-        console.log(newUser);
-        return true;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.fetchUsers();
+            if (this.users.find((user) => user.email === email ||
+                user.password === password ||
+                user.username === username)) {
+                console.log("user already exist");
+                return false;
+            }
+            const newUser = { username, email, password };
+            const response = yield fetch(userURL, {
+                method: "POST",
+                body: JSON.stringify(newUser),
+            });
+            if (response.ok) {
+                console.log("User added successfully");
+                return true;
+            }
+            else {
+                console.log("Failed");
+                return false;
+            }
+        });
     }
 }
 const signuplogic = new RegisterUser(user_1.user2);
 const signform = document.getElementById("signup");
-signform === null || signform === void 0 ? void 0 : signform.addEventListener("submit", (e) => {
+signform === null || signform === void 0 ? void 0 : signform.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
     e.preventDefault();
     const userName = document.getElementById("username")
         .value;
@@ -27,11 +57,11 @@ signform === null || signform === void 0 ? void 0 : signform.addEventListener("s
         .value;
     const userPassword = document.getElementById("password")
         .value;
-    if (signuplogic.addUser(userName, userEmail, userPassword)) {
+    if (yield signuplogic.addUser(userName, userEmail, userPassword)) {
         alert(`successfully registerd`);
         window.location.href = "../login.html";
     }
     else {
         alert(`user exists`);
     }
-});
+}));

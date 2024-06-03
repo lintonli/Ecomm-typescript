@@ -1,12 +1,23 @@
 import { Iuser, user2 } from "./user";
-
+const userURL = "http://localhost:3000/users";
 class RegisterUser {
   private users: Iuser[];
   constructor(users: Iuser[]) {
     this.users = users;
   }
 
-  addUser(username: string, email: string, password: string): boolean {
+  async fetchUsers(): Promise<void> {
+    let response = await fetch(userURL);
+    let data = await response.json();
+    this.users = data;
+  }
+
+  async addUser(
+    username: string,
+    email: string,
+    password: string
+  ): Promise<boolean> {
+    await this.fetchUsers();
     if (
       this.users.find(
         (user) =>
@@ -20,14 +31,24 @@ class RegisterUser {
       return false;
     }
     const newUser: Iuser = { username, email, password };
-    console.log(newUser);
-    return true;
+    const response = await fetch(userURL, {
+      method: "POST",
+      body: JSON.stringify(newUser),
+    });
+    if (response.ok) {
+      console.log("User added successfully");
+
+      return true;
+    } else {
+      console.log("Failed");
+      return false;
+    }
   }
 }
 
 const signuplogic = new RegisterUser(user2);
 const signform = document.getElementById("signup");
-signform?.addEventListener("submit", (e) => {
+signform?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const userName = (document.getElementById("username") as HTMLInputElement)
@@ -37,7 +58,7 @@ signform?.addEventListener("submit", (e) => {
   const userPassword = (document.getElementById("password") as HTMLInputElement)
     .value;
 
-  if (signuplogic.addUser(userName, userEmail, userPassword)) {
+  if (await signuplogic.addUser(userName, userEmail, userPassword)) {
     alert(`successfully registerd`);
     window.location.href = "../login.html";
   } else {
